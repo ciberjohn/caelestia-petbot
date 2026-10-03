@@ -1,22 +1,24 @@
 # PetBot — meet Bloop, a sound-reactive desktop bot for Caelestia
 
 Bloop is a tiny WALL-E-meets-LCARS bot that floats above your windows on a Caelestia
-desktop. Two binocular eyes blink, tilt, squash and dilate with whatever is playing;
-below them, a row of Star Trek-amber dots is its mouth — and its VU meter, rippling
-with the sound. Every now and then it says something nice, in a comic-book action
-balloon, aligned with the time of day.
+desktop. It has a body — a rounded head carrying two binocular eyes that blink, tilt,
+squash and dilate with whatever is playing, a torso with stubby arms and feet, and a
+row of Star Trek-amber dots for a mouth. The dots are its VU meter, rippling with the
+sound; the whole bot hops on beats. Every now and then it says something nice, in a
+comic-book action balloon, aligned with the time of day.
 
 It started life as a performance hack: a sound meter built to replace Caelestia's
 full-screen background visualiser, which was eating CPU on a small iGPU laptop. The
-meter worked so well that it grew a face. The cheapness stayed: Bloop is plain
-rectangles and text driven by a 20 Hz snapshot of the shell's audio analyser — no
-blur, no shaders, no image assets.
+meter worked so well that it grew a face — and then, one thing leading to another, a
+body, opinions and a flair for comic balloons. The cheapness stayed: Bloop is plain
+rounded rectangles and text driven by a 20 Hz snapshot of the shell's audio analyser —
+no blur, no shaders, no image assets.
 
 | At rest | Reacting to your sound | Saying something |
 |---|---|---|
 | ![Bloop at rest](docs/screenshot-rest.png) | ![Bloop reacting](docs/screenshot-reacting.png) | ![Bloop speaking](docs/screenshot-balloon.png) |
 
-[Watch the 14-second demo video](docs/demo.mp4) — Bloop greets a screen recording,
+[Watch the 17-second demo video](docs/demo.mp4) — Bloop greets a screen recording,
 then reacts to sound.
 
 ## What Bloop does
@@ -33,12 +35,12 @@ then reacts to sound.
 - **Reacts to screen recording.** The moment a recording starts, Bloop clears its
   throat: "ACTION! YOU'RE THE STAR OF THIS TAKE." (or one of its friends).
 - **Floats by default.** Bloop lives above your windows out of the box. A small pin
-  button in the plate's corner (two-note sci-fi ping) parks it back into the desktop
-  corner, pinned in; pinned in, the whole plate becomes a drag surface and you can
-  park Bloop anywhere on screen. Pin state and position survive shell restarts.
-- **Cheap.** A fraction of one core while audio plays on a 144 Hz display — the same
-  ballpark as the original sound meter it grew out of, and far cheaper than the
-  visualiser it replaces.
+  button beside its head (two-note sci-fi ping) parks it back into the desktop corner;
+  pinned out, the whole bot becomes a drag surface and you can park Bloop anywhere on
+  screen. Pin state and position survive shell restarts.
+- **Cheap.** About 3–4% of one core idle and 6–7% while reacting to audio on a 144 Hz
+  display — roughly 3x cheaper than the 16-bar meter it grew out of, and far cheaper
+  than the visualiser it replaces.
 
 ## Requirements
 
@@ -67,12 +69,12 @@ Everything interesting is at the top of `plugins/petbot/main.qml`:
 - `PETBOT_SCREEN` — environment variable pinning Bloop to a specific output on
   multi-head setups (e.g. `PETBOT_SCREEN=HDMI-A-1`, set it via `~/.config/environment.d/`
   or your session environment before the shell starts; unset = first screen)
-- `plateWidth`, `plateHeight`, `edgeMargin` — plate size and corner offset
+- `plateWidth`, `plateHeight`, `edgeMargin` — the bot's window size (the body scales
+  within it) and the corner offset
 - `bubbleShowSecs` — how long balloons stay up
 - the message lists in `currentMessages()` — your own one-liners, bucketed by hour
-- the bot's colors — the eyes are plain `Rectangle`s and the LCARS amber is a single
-  `color` constant near the top of the face; the plate and accents follow your
-  Material You wallpaper colors
+- the bot's colors — the body shell follows your Material You wallpaper colors, and
+  the LCARS amber is a single `color` constant inside the body (`lcars`)
 
 The sounds are synthesized, not recorded — `plugins/petbot/make-pings.py` regenerates
 all four (pin on/off, message bloom left/right) from scratch, so you can change the
@@ -80,9 +82,10 @@ notes, decay and reverb to taste and re-run the script.
 
 ## How it works (the mildly technical bit)
 
-- Bloop is a Wayland layer-shell surface (`PanelWindow` on `WlrLayer.Bottom`, with
-  the wallpaper; `Top` when pinned-in or while speaking), so it coexists with normal
-  windows without taskbar entries or focus stealing.
+- Bloop is a Wayland layer-shell surface (`PanelWindow` on `WlrLayer.Top` while
+  floating — the default — or while speaking; `Bottom`, with the wallpaper, when parked
+  into the desktop corner), so it coexists with normal windows without taskbar entries
+  or focus stealing.
 - Quickshell 0.3.x does not position unanchored layer surfaces (the compositor
   centers them), so the surface is always anchored to the top-left edge and the
   position is expressed entirely through layer margins — any screen position is

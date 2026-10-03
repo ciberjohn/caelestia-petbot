@@ -38,9 +38,11 @@ PanelWindow {
     id: root
 
     // ---- tunables ----------------------------------------------------------
-    // set to a specific output name (e.g. "HDMI-A-1") to keep Bloop on that
-    // screen; empty = the first screen Quickshell reports (primary on most setups)
-    readonly property string screenName: ""
+    // keep Bloop on a specific output: set the PETBOT_SCREEN environment variable
+    // to the output name (e.g. "HDMI-A-1") before the shell starts - useful on
+    // multi-head setups where the first reported screen is not the one you want;
+    // unset/empty = the first screen Quickshell reports (primary on most setups)
+    readonly property string screenName: Quickshell.env("PETBOT_SCREEN") ?? ""
     readonly property int plateWidth: 220
     readonly property int plateHeight: 96
     readonly property int edgeMargin: 24             // distance from screen edges

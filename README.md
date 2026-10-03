@@ -64,7 +64,9 @@ restart the shell. To disable without deleting: Nexus → Settings → Plugins.
 
 Everything interesting is at the top of `plugins/petbot/main.qml`:
 
-- `screenName` — pin Bloop to a specific output (empty = primary screen)
+- `PETBOT_SCREEN` — environment variable pinning Bloop to a specific output on
+  multi-head setups (e.g. `PETBOT_SCREEN=HDMI-A-1`, set it via `~/.config/environment.d/`
+  or your session environment before the shell starts; unset = first screen)
 - `plateWidth`, `plateHeight`, `edgeMargin` — plate size and corner offset
 - `bubbleShowSecs` — how long balloons stay up
 - the message lists in `currentMessages()` — your own one-liners, bucketed by hour

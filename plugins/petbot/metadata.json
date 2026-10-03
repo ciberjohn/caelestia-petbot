@@ -1,0 +1,11 @@
+{
+    "id": "petbot",
+    "name": "PetBot",
+    "type": "quickshell",
+    "description": "Bloop - a tiny sound-reactive desktop companion: eyes that blink and dilate with your music, a mouth that opens with the level, and mood-lifting one-liners in comic-style action balloons aligned with the time of day. Pin button toggles always-on-top + draggable floating mode. Cheap by design: plain rectangles, 20 Hz sampling, no assets.",
+    "author": {
+        "name": "ciberjohn"
+    },
+    "icon": "pets",
+    "restart": true
+}

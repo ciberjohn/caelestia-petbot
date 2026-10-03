@@ -443,11 +443,11 @@ PanelWindow {
         }
     }
 
-    Rectangle {
+    Item {
         id: plate
 
         // window-sized at rest (window == plate); drawn at its own position
-        // inside the enlarged (bubble/drag) surfaces
+        // inside the enlarged (balloon/drag) surfaces
         x: root.dragging ? state.floatX
             : (root.bubbleVisible && root.bubbleAbove ? root.bubbleHeight + root.bubbleGap : 0)
         y: root.dragging ? state.floatY
@@ -455,13 +455,7 @@ PanelWindow {
         width: root.plateWidth
         height: root.plateHeight
 
-        radius: 22
-        color: Colours.palette.m3surfaceContainer ?? "#000000"
         opacity: state.alwaysOnTop ? 0.85 : 0.55
-        border.width: 1
-        border.color: state.alwaysOnTop
-            ? (Colours.palette.m3primary ?? "#b7c8ff")
-            : Qt.rgba(1, 1, 1, 0.08)
 
         Behavior on opacity {
             NumberAnimation {
@@ -470,44 +464,39 @@ PanelWindow {
             }
         }
 
-        // the bot: a WALL-E-style head - binocular eyes - with a Star Trek
-        // LCARS dot meter for a mouth (the dots double as the VU meter).
-        // Everything animates off the 20 Hz level snapshot with short Behaviors:
-        // tilt, squash, dot glow, the little hop on beats.
+        // the body: a compact WALL-E x LCARS fusion (rounded head with the
+        // binocular eyes, a torso carrying the amber dot meter, stubby arms
+        // and feet) instead of a rectangular plate. Plain rounded rectangles;
+        // everything animates off the 20 Hz level snapshot: the head tilts
+        // with the sound, the eyes squash and dilate, the dots ripple, the
+        // whole body hops on beats.
         Item {
-            id: face
+            id: body
 
-            property real faceCX: (root.plateWidth - 30) / 2   // keep clear of the pin
-            property real faceCY: root.plateHeight / 2
-            x: faceCX - 60
-            y: faceCY - 30 - root.level * 5                     // hop on beats
-            width: 120
-            height: 60
+            property real bodyCX: (root.plateWidth - 30) / 2   // keep clear of the pin
+            x: bodyCX - 70
+            y: 2 - root.level * 5                              // hop on beats
+            width: 140
+            height: 92
 
-            // LCARS amber: the accent color of the dot meter
+            readonly property color shell: Colours.palette.m3surfaceContainer ?? "#000000"
+            readonly property color edge: state.alwaysOnTop
+                ? (Colours.palette.m3primary ?? "#b7c8ff")
+                : Qt.rgba(1, 1, 1, 0.12)
             readonly property color lcars: "#ffb100"
 
-            // binocular eyes: two capsule lenses that tilt and squash with the
-            // sound, pupils dilating with the level (WALL-E binoculars)
             Rectangle {
-                id: leftEye
-
-                x: 22
-                y: 8
-                width: 26
-                height: (34 - root.level * 2) * root.blinkScale
-                radius: 13
-                color: "#e8e6eb"
+                // head - tilts with the sound
+                x: 32
+                y: 0
+                width: 76
+                height: 46
+                radius: 23
+                color: body.shell
                 border.width: 1
-                border.color: "#b9b7bc"
+                border.color: body.edge
                 rotation: -2 + root.level * 3
 
-                Behavior on height {
-                    NumberAnimation {
-                        duration: 90
-                        easing.type: Easing.OutQuad
-                    }
-                }
                 Behavior on rotation {
                     NumberAnimation {
                         duration: 120
@@ -516,96 +505,167 @@ PanelWindow {
                 }
 
                 Rectangle {
-                    // pupil
-                    x: parent.width / 2 - width / 2 + root.wander.x
-                    y: parent.height / 2 - height / 2 + root.wander.y
-                    width: 9 + root.level * 5
-                    height: width
-                    radius: width / 2
-                    color: "#1c2024"
+                    // left eye
+                    x: 13
+                    y: 9
+                    width: 20
+                    height: (24 - root.level * 1.5) * root.blinkScale
+                    radius: 10
+                    color: "#e8e6eb"
+                    border.width: 1
+                    border.color: "#b9b7bc"
 
-                    Behavior on width {
+                    Behavior on height {
                         NumberAnimation {
-                            duration: 60
+                            duration: 90
                             easing.type: Easing.OutQuad
                         }
                     }
-                    Behavior on x {
+
+                    Rectangle {
+                        // pupil
+                        x: parent.width / 2 - width / 2 + root.wander.x
+                        y: parent.height / 2 - height / 2 + root.wander.y
+                        width: 7 + root.level * 4
+                        height: width
+                        radius: width / 2
+                        color: "#1c2024"
+
+                        Behavior on width {
+                            NumberAnimation {
+                                duration: 60
+                                easing.type: Easing.OutQuad
+                            }
+                        }
+                        Behavior on x {
+                            NumberAnimation {
+                                duration: 300
+                                easing.type: Easing.OutQuad
+                            }
+                        }
+                        Behavior on y {
+                            NumberAnimation {
+                                duration: 300
+                                easing.type: Easing.OutQuad
+                            }
+                        }
+                    }
+                }
+
+                Rectangle {
+                    // right eye
+                    x: 43
+                    y: 9
+                    width: 20
+                    height: (24 - root.level * 1.5) * root.blinkScale
+                    radius: 10
+                    color: "#e8e6eb"
+                    border.width: 1
+                    border.color: "#b9b7bc"
+
+                    Behavior on height {
                         NumberAnimation {
-                            duration: 300
+                            duration: 90
                             easing.type: Easing.OutQuad
                         }
                     }
-                    Behavior on y {
-                        NumberAnimation {
-                            duration: 300
-                            easing.type: Easing.OutQuad
+
+                    Rectangle {
+                        // pupil
+                        x: parent.width / 2 - width / 2 + root.wander.x
+                        y: parent.height / 2 - height / 2 + root.wander.y
+                        width: 7 + root.level * 4
+                        height: width
+                        radius: width / 2
+                        color: "#1c2024"
+
+                        Behavior on width {
+                            NumberAnimation {
+                                duration: 60
+                                easing.type: Easing.OutQuad
+                            }
+                        }
+                        Behavior on x {
+                            NumberAnimation {
+                                duration: 300
+                                easing.type: Easing.OutQuad
+                            }
+                        }
+                        Behavior on y {
+                            NumberAnimation {
+                                duration: 300
+                                easing.type: Easing.OutQuad
+                            }
                         }
                     }
                 }
             }
 
             Rectangle {
-                id: rightEye
-
-                x: 52
-                y: 8
-                width: 26
-                height: (34 - root.level * 2) * root.blinkScale
-                radius: 13
-                color: "#e8e6eb"
-                border.width: 1
-                border.color: "#b9b7bc"
-                rotation: -2 + root.level * 3
-
-                Behavior on height {
-                    NumberAnimation {
-                        duration: 90
-                        easing.type: Easing.OutQuad
-                    }
-                }
-                Behavior on rotation {
-                    NumberAnimation {
-                        duration: 120
-                        easing.type: Easing.OutQuad
-                    }
-                }
-
-                Rectangle {
-                    // pupil
-                    x: parent.width / 2 - width / 2 + root.wander.x
-                    y: parent.height / 2 - height / 2 + root.wander.y
-                    width: 9 + root.level * 5
-                    height: width
-                    radius: width / 2
-                    color: "#1c2024"
-
-                    Behavior on width {
-                        NumberAnimation {
-                            duration: 60
-                            easing.type: Easing.OutQuad
-                        }
-                    }
-                    Behavior on x {
-                        NumberAnimation {
-                            duration: 300
-                            easing.type: Easing.OutQuad
-                        }
-                    }
-                    Behavior on y {
-                        NumberAnimation {
-                            duration: 300
-                            easing.type: Easing.OutQuad
-                        }
-                    }
-                }
-            }
-
-            // LCARS dot meter: the bot's mouth - five amber dots that light
-            // up with the sound level, staggered so beats ripple across
-            Row {
-                x: 34
+                // torso
+                x: 26
                 y: 48
+                width: 88
+                height: 40
+                radius: 16
+                color: body.shell
+                border.width: 1
+                border.color: body.edge
+            }
+
+            Rectangle {
+                // left arm
+                x: 12
+                y: 54
+                width: 12
+                height: 26
+                radius: 6
+                color: body.shell
+                border.width: 1
+                border.color: body.edge
+            }
+
+            Rectangle {
+                // right arm
+                x: 116
+                y: 54
+                width: 12
+                height: 26
+                radius: 6
+                color: body.shell
+                border.width: 1
+                border.color: body.edge
+            }
+
+            Rectangle {
+                // left foot
+                x: 46
+                y: 88
+                width: 18
+                height: 4
+                radius: 2
+                color: body.shell
+                border.width: 1
+                border.color: body.edge
+            }
+
+            Rectangle {
+                // right foot
+                x: 76
+                y: 88
+                width: 18
+                height: 4
+                radius: 2
+                color: body.shell
+                border.width: 1
+                border.color: body.edge
+            }
+
+            Row {
+                // LCARS dot meter: the bot's mouth - five amber dots that
+                // light up with the sound level, staggered like a VU meter
+                x: 36
+                y: 58
                 spacing: 7
 
                 Repeater {
@@ -617,7 +677,7 @@ PanelWindow {
                         width: 8
                         height: 8
                         radius: 4
-                        color: face.lcars
+                        color: body.lcars
                         opacity: root.level * 6 > index + 0.4 ? 0.95 : 0.16
 
                         Behavior on opacity {
@@ -629,10 +689,9 @@ PanelWindow {
                     }
                 }
             }
-
         }
 
-        // the pin: always visible, top-right of the plate. Filled = floating & on top.
+        // the pin: always visible, top-right of the window. Filled = floating & on top.
         Item {
             id: pinButton
             z: 1  // above the drag MouseArea

@@ -44,7 +44,7 @@ PanelWindow {
     // unset/empty = the first screen Quickshell reports (primary on most setups)
     readonly property string screenName: Quickshell.env("PETBOT_SCREEN") ?? ""
     readonly property int plateWidth: 220
-    readonly property int plateHeight: 96
+    readonly property int plateHeight: 100
     readonly property int edgeMargin: 24             // distance from screen edges
     readonly property int bubbleHeight: 76           // action balloon (up to 3 lines)
     readonly property int bubbleGap: 10
@@ -475,7 +475,7 @@ PanelWindow {
 
             property real bodyCX: (root.plateWidth - 30) / 2   // keep clear of the pin
             x: bodyCX - 70
-            y: 2 - root.level * 5                              // hop on beats
+            y: 6 - root.level * 5                              // hop on beats; fits the 100px window
             width: 140
             height: 92
 
